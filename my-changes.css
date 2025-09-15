@@ -9,13 +9,15 @@
 	        --ic-brand-global-nav-avatar-border: #979797;
 	        /* General Nav */
 	        --ic-brand-global-nav-ic-icon-svg-fill: #6d6f71;
-	        --ic-brand-global-nav-menu-item__text-color: #6d6f71;
+	        --ic-brand-global-nav-menu-item__text-color: #49484A;
 	        /* Active Nav */
-	        --ic-brand-global-nav-ic-icon-svg-fill--active: #A6192E;
+	        --ic-brand-global-nav-ic-icon-svg-fill--active: #A6192aE;
 	        --ic-brand-global-nav-menu-item__text-color--active: #A6192E;
 	        /* Links */
-	        --ic-link-color: #706c6c;
+	        --ic-link-color: #595555;
 	        --ic-link-color-darkened-10: #A6192E;
+	        /* Other Links */
+	        --ic-brand-font-color-dark-lightened-28: #595555;
 	        /* Card */
 	        /* --ic-brand-font-color-dark-lightened-28 : #6d6f71; */
 	        /* Button */
@@ -37,7 +39,8 @@
 	        text-underline-offset: 2px !important;
 	    }
 	    [class$="-view-link"]:hover{
-	        text-decoration-color: unset !important;
+  		    color: #A6192E !important;
+	        text-decoration-color: transparent !important;
 	    }
 	    .css-1rjezae-view-link:-webkit-any(a):hover, .css-1rjezae-view-link:-webkit-any(button):hover, 
 	    .css-1rjezae-view-link:-webkit-any(a):active, .css-1rjezae-view-link:-webkit-any(button):active{
@@ -70,6 +73,13 @@
 	    .standalone-icon:before {
 	    color: unset;
 	    }
+	    /* Menu Active */
+	    .ic-app-header__menu-list-item.ic-app-header__menu-list-item--active { 
+				border-left: 4px solid #A6192E;
+	    }
+	    .ic-app-header__menu-list-item.ic-app-header__menu-list-item--active .ic-app-header__menu-list-link {
+	      padding-right: 4px;
+			}
 	
 	    /* Button */
 	    .btn:hover, .Button:hover, .ui-button:hover{
@@ -188,6 +198,9 @@
 	
 	    /* History */
 	    .history-tray li [class$="-text"] { font-weight: 300; }
+	    .css-py5qs-text {
+	    	color: #595555;
+	    }
 	
 	    /* Select */
 	    .css-6ut85x-view-link:-webkit-any(a):focus, .css-6ut85x-view-link:-webkit-any(button):focus,
@@ -231,3 +244,4 @@
 	    .css-16aj8bt-toggleDetails__toggle, .css-17asr8x-view--block-link:-webkit-any(a), .css-17asr8x-view--block-link:-webkit-any(button) {
 	    -webkit-tap-highlight-color: transparent;
 	    }
+	
