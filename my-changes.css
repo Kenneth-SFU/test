@@ -188,10 +188,10 @@
 	
 	
 	    /* Help sections Link */
-	    .css-17asr8x-view--block-link:-webkit-any(a), .css-17asr8x-view--block-link:-webkit-any(button) {
+	    [class^="css-"][class$="-view--block-link"]:-webkit-any(a), [class^="css-"][class$="-view--block-link"]:-webkit-any(button) {
 	    color: var(--ic-link-color) !important;
 	    }
-	    .css-17asr8x-view--block-link:-webkit-any(a):hover, .css-17asr8x-view--block-link:-webkit-any(button):hover, .css-17asr8x-view--block-link:-webkit-any(a):active, .css-17asr8x-view--block-link:-webkit-any(button):active {
+	    [class^="css-"][class$="-view--block-link"]:-webkit-any(a):hover, [class^="css-"][class$="-view--block-link"]:-webkit-any(button):hover, [class^="css-"][class$="-view--block-link"]:-webkit-any(a):active, [class^="css-"][class$="-view--block-link"]:-webkit-any(button):active {
 	    color: var(--ic-link-color-darkened-10) !important;
 	    }
 	    #help_tray li [role="presentation"] + [class$="-text"] { font-weight: 300;}
@@ -226,7 +226,7 @@
 	    .ef-item-row:hover {
 	        background-color: #F5F2F2;
 	    }
-	  
+	  fhelp
 	    /* ---- Mobile ---- */
 	    .css-btbvu3-inlineSVG-svgIcon, .css-1fgeg95-inlineSVG-svgIcon {
 	    fill: var(--ic-brand-global-nav-ic-icon-svg-fill) !important;
