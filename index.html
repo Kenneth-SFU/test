@@ -1,30 +1,48 @@
 <!DOCTYPE html>
 <html>
     <style>
-    /* Default for standard screens (DPR = 1) */
-    .dpr-indicator::after {
-      content: "1";
-      font-weight: bold;
+    /* 1. Register properties to calculate unitless window width */
+    @property --_w {
+      syntax: '<length>';
+      inherits: true;
+      initial-value: 100vw;
     }
 
-    /* Target Retina/High-DPI screens (DPR = 2) */
+    :root {
+      /* Converts 100vw into a raw, unitless integer */
+      --width: tan(atan2(var(--_w), 1px)); 
+    }
+
+    /* 2. Style your pure CSS debug badge */
+    .debug-badge {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 8px 12px;
+      font-family: monospace;
+      font-size: 30px;
+      border-radius: 4px;
+      z-index: 99999;
+    }
+
+    /* 3. Inject the live pixel width and default DPR */
+    .debug-badge::before {
+      counter-reset: w var(--width);
+      content: "Width: " counter(w) "px | DPR: 1";
+    }
+
+    /* 4. Update the DPR display dynamically via Media Queries */
     @media (min-resolution: 2dppx) {
-      .dpr-indicator::after {
-        content: "2";
+      .debug-badge::before {
+        content: "Width: " counter(w) "px | DPR: 2";
       }
     }
 
-    /* Target Ultra High-DPI screens (DPR = 3) */
     @media (min-resolution: 3dppx) {
-      .dpr-indicator::after {
-        content: "3";
-      }
-    }
-
-    /* Target precise intermediate fractional DPRs if needed (e.g., 1.5) */
-    @media (min-resolution: 1.5dppx) and (max-resolution: 1.99dppx) {
-      .dpr-indicator::after {
-        content: "1.5";
+      .debug-badge::before {
+        content: "Width: " counter(w) "px | DPR: 3";
       }
     }
     
@@ -32,7 +50,7 @@
 <body>
 
 <h1>Image srcset test</h1>
-<div class="dpr-indicator">Your DPR is: </div>
+<div class="debug-badge"></div>
 
 <div style=" container-type: inline-size;    container-name: panel;    resize: horizontal; 
             /* width: 300px;     overflow: auto; */">
@@ -47,7 +65,7 @@
             images/1600.webp 1600w,
             images/1200.webp 1200w,
             images/800.webp 800w,
-            images/400.webp 400w" alt="Students walking down a flight of stairs">
+            images/400.webp 400w" alt="SFU Photo">
 </div>
 <!-- img sizes="(min-width: 1920px) 1920px, 100vw" src="/_assets/img/admissions/ubc_ca_image_admissions-hero-1920x700.jpg" srcset="/_assets/img/admissions/ubc_ca_image_admissions-hero-3840x1400.jpg 3840w,
                     /_assets/img/admissions/ubc_ca_image_admissions-hero-2400x875.jpg 2400w,
