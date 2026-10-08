@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compression Comparison Demo</title>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --bg-color: #f5f5f7;
+            --panel-bg: #ffffff;
+            --text-color: #1d1d1f;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Navigation Header */
+        header {
+            background-color: var(--panel-bg);
+            padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Easily stylable tabs/links */
+        .comp-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #e8e8ed;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 19px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .comp-link:hover {
+            background-color: #d2d2d7;
+        }
+
+        .comp-link.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 102, 204, 0.3);
+        }
+        .comp-link span{ font-size: small; display: block; font-style: italic; margin-top: 0.3em; }
+
+        /* Checkbox Container Styling */
+        .control-panel {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: small;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .control-panel input {
+            cursor: pointer;
+        }
+
+        /* Main Image Viewer Container */
+        .viewer-container {
+            flex: 1;
+            overflow: hidden; /* Hide standard browser scrollbars */
+            position: relative;
+            background-color: #111; /* Dark background highlights compression artifacts */
+            cursor: grab; /* Shows the open hand pointer */
+        }
+
+        .viewer-container:active {
+            cursor: grabbing; /* Shows clenched hand while dragging */
+        }
+
+        /* Lock cursor style and disable pointer events when fit-to-width is active */
+        .viewer-container.fit-mode {
+            cursor: default;
+        }
+        .viewer-container.fit-mode:active {
+            cursor: default;
+        }
+
+        /* The Image Wrapper that moves based on drag coordinates */
+        .image-stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+            will-change: transform;
+            width: auto;
+        }
+
+        /* When fit-mode is on, reset positions and clamp parent size */
+        .viewer-container.fit-mode .image-stage {
+            position: relative;
+            transform: none !important;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Actual image dimensions are locked to native size by default */
+        #demo-image {
+            display: block;
+            pointer-events: none; /* Prevents native browser ghost-image dragging */
+            max-width: none;
+            max-height: none;
+            width: auto;
+            height: auto;
+        }
+
+        /* CSS rule that triggers when fit-mode class is added via Javascript */
+        .viewer-container.fit-mode #demo-image {
+            max-width: 100% !important;
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Image Compression Comparison - 2000px</h1>
+        
+        <!-- ADD OR REMOVE LINKS HERE -->
+        <nav class="nav-links" id="nav-links">
+            <button class="comp-link active" data-src="freedom-square-header.jpg">Original<span>2M</span></button>
+            <button class="comp-link" data-src="AEM.jpg">AEM<span>(2000px) 430kb</span></button>
+            <button class="comp-link" data-src="freedom-square-header_magick_40.jpg">ImgMagick <span>Jpg 40 - 278 kb</span></button>
+            <button class="comp-link" data-src="freedom-square-header_magick_30.jpg">ImgMagick <span>Jpg 30 - 229 kb</span></button>
+            <button class="comp-link" data-src="freedom-square-header_magick_20.jpg">ImgMagick <span>Jpg 20 - 172 kb</span></button>
+            <button class="comp-link" data-src="freedom-square-header_magick_40.webp">ImgMagick <span>Webp 40 - 195 kb</span></button>
+            <button class="comp-link" data-src="freedom-square-header_magick_30.webp">ImgMagick <span>Webp 30 - 156 kb</span></button>
+            <button class="comp-link" data-src="freedom-square-header_magick_20.webp">ImgMagick <span>Webp 20 - 125 kb</span></button>
+        </nav>
+
+        <!-- New Control Checkbox Options -->
+        <label class="control-panel">
+            <input type="checkbox" id="fitWidthToggle"> Fit to browser width 
+        </label>
+    </header>
+
+    <div class="viewer-container" id="viewer">
+        <div class="image-stage" id="stage">
+            <img id="demo-image" src="" alt="Comparison Target">
+        </div>
+    </div>
+
+    <script>
+        const links = document.querySelectorAll('.comp-link');
+        const img = document.getElementById('demo-image');
+        const stage = document.getElementById('stage');
+        const viewer = document.getElementById('viewer');
+        const fitToggle = document.getElementById('fitWidthToggle');
+
+        // Dragging & Panning State Positions
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+        let isFitMode = false;
+
+        // Initialize view using the default active link element
+        const activeLink = document.querySelector('.comp-link.active');
+        if (activeLink) {
+            img.src = activeLink.getAttribute('data-src');
+        }
+
+        // Apply transformations smoothly using CSS Translate
+        function updatePosition() {
+            if (isFitMode) return; // Prevent updating position state if fit mode is on
+            stage.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        }
+
+        // Mouse Event Listeners for Draggable Stage
+        viewer.addEventListener('mousedown', (e) => {
+            if (isFitMode) return; // Disable drag functionality completely
+            isDragging = true;
+            startX = e.clientX - currentX;
+            startY = e.clientY - currentY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging || isFitMode) return;
+            e.preventDefault();
+            currentX = e.clientX - startX;
+            currentY = e.clientY - startY;
+            updatePosition();
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Listen for Checkbox toggle shifts
+        fitToggle.addEventListener('change', (e) => {
+            isFitMode = e.target.checked;
+            
+            if (isFitMode) {
+                viewer.classList.add('fit-mode');
+            } else {
+                viewer.classList.remove('fit-mode');
+                updatePosition(); // Restore the pan position coordinates instantly
+            }
+        });
+
+        // Loop over links to switch sources without breaking active mode settings
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                links.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                const targetSrc = link.getAttribute('data-src');
+                img.src = targetSrc;
+            });
+        });
+    </script>
+</body>
+</html>
